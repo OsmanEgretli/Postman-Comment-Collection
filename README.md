@@ -94,9 +94,6 @@ Once the collection is imported and the environment variables are set, you can r
 </br>
 <img width="1459" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/b7463c4d-c943-4552-be87-38df4484da28"></br>
 </br>
-<img width="1319" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/5c1b4230-e5b6-4c18-a4f6-53c4563c17bb">
-</br>
-</br>
 
 ### Review the test results 
 
@@ -113,27 +110,26 @@ After running the tests, you can review the test results in the Postman runner. 
  - To ensure comprehensive coverage, I included positive and negative test cases, validating both expected and unexpected behavior.
  - Tests are divided into folders containing the Create , Edit, Get/Read and Delete scenarios for the comment feature. Also important "CRUD" test case, "comment can not be created for non Existing Post"  and "Comment can not be created for Deleted Post" test cases are added in folders.
  </br>
- </br>
    <img width="370" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/f847301e-4f15-4dd5-a469-7a3f354031f1">
   </br>
   </br>
 
  - Each folder has been created with tests containing its own dependency. In order to set the environmental variables, these requests must be run in the order they are in the folder.
- </br>
+</br>
+ <img width="452" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/3c85f0f5-387d-48de-bec0-efff01e472f2">
+</br>
+</br>
+
+
+ - The name of each request is created with the name of the test it serves its purpose. In addition, the comments written in the body and test section also explain their purpose.
  </br>
  <img width="452" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/4450563a-d521-4bb1-ac8e-254dd95490cd">
   </br>
   </br>
 
- - The name of each request is created with the name of the test it serves its purpose. In addition, the comments written in the body and test section also explain their purpose.
-</br>
-</br>
 <img width="1142" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/96b78f45-0ab1-4edc-8043-0cf04a343e4d">
 </br>
-</br>
- <img width="452" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/3c85f0f5-387d-48de-bec0-efff01e472f2">
-</br>
-</br>
+
 
 ### Future Expansion
 In the future, these tests can be expanded by incorporating additional test scenarios, edge cases, and performance testing. Additionally, integration with a continuous integration/continuous deployment (CI/CD) pipeline can be set up to automatically run the tests on each code change or deployment. We can expand the test coverage by defining user behaviour and business rules and adding header tests.
