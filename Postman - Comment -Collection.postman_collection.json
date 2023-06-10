@@ -1,0 +1,2244 @@
+{
+	"info": {
+		"_postman_id": "8b5349fe-07cd-4fc9-aa0a-05784edb1200",
+		"name": "Postman - Comment -Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18259468"
+	},
+	"item": [
+		{
+			"name": "Create Comment Scenarios",
+			"item": [
+				{
+					"name": "Get All Posts- To get valid postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Verify comment creation has the correct details\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(requestBody.body);",
+									"});",
+									"pm.test(\"Verify response body has id information\" , function (){",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment with Special Characters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Verify comment creation has the correct details\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(requestBody.body);",
+									"});",
+									"pm.test(\"Verify response body has id information\" , function (){",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"123 !'^+%& QWE .dsf,-\",\n      \"email\": \"{{email}}\",\n      \"body\": \"123 !'^+%& QWE .dsf,-\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments - To get valid and existing commentId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastCommentId', lastId);",
+									"//Last comment Id has been grabbed and set into an environment variable to use in duplicate case"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment with duplicate Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//We know there is already a comment with lastCommentId , so we need to asssert that another comment is not being created and get the response stating that it is duplicate id",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"",
+									"pm.test(\"Verify response body contains 'Insert failed, duplicate id'\", function () {",
+									"    var responseBody = pm.response.text();",
+									"    pm.expect(responseBody).to.include(\"Insert failed, duplicate id\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n\n    //There is already comment existing with last comment ID\n      \"id\": {{lastCommentId}},\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment without Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//A comment without email information can be created currently. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"pm.test(\"Verify response body contains 'email information is missing'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"email information is missing\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"body\": \"{{body}}\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment without Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//A comment without body information can be created currently. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"pm.test(\"Verify response body contains 'body information is missing'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"body information is missing\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment without postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//A comment without postId information can be created currently. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"pm.test(\"Verify response body contains 'postId information is missing'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"postId information is missing\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment without Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//A comment without name information can be created currently. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"pm.test(\"Verify response body contains 'name information is missing'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"name information is missing\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment without Request Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Obviously, a comment with only id is created without request body in the current situation. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment with corrupted request body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// A comment with corrupted body can be created in the current situation. But let's suppose this is a bug and we want to observe this. In this case we should be observing 400 (Bad Request) from server",
+									"pm.test(\"Verify response status is not 201\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.not.equal(201);",
+									"});",
+									"pm.test(\"Verify response status is 400\", function () {",
+									"    var responseStatus = pm.response.code;",
+									"    pm.expect(responseStatus).to.be.equal(400);",
+									"});",
+									"",
+									"pm.test(\"Verify response body contains 'invalid request'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"invalid request\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   [ {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n       , {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ]\n// This body type is not default body type which is expected from server ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Edit Comment Scenarios",
+			"item": [
+				{
+					"name": "Get All Posts- To get valid postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment for edit case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Store comment id in environment variable\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var commentId = responseJson.id;",
+									" // Set the commentId value to an environment variable named \"commentId\" to use it in further cases such as edit and delete",
+									"    pm.environment.set(\"commentId\", commentId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Comment Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"editBody\"));",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"commentId\"));",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{editBody}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get/Read Edited Comment Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify edited comment has the correct details\", function () {",
+									"   ",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the edited comment",
+									"   ",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"editBody\"));",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"commentId\"));",
+									"   pm.expect(responseJson.postId).to.eql(Number(pm.environment.get(\"lastPostId\"))); ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Comment with id on request body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details and id is not changed\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(requestBody.body);",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"commentId\"));",
+									"",
+									"});",
+									"//Even if we specify another id in request body , comment with comment id in url is being edited."
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const differentId = pm.environment.get(\"commentId\")+1;",
+									"pm.environment.set(\"differentId\", differentId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        //id has been set in pre-request section and it  is different from commentId which we want to edit\n        \"id\":{{differentId}},\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{editBody}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments - To get non existing commentId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"const nonExistCommentId = lastId+1;",
+									"pm.environment.set('nonExistCommentId', nonExistCommentId);",
+									"//Last commentId+1 has been grabbed and set into an environment variable to use in nonexisting ID  case"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Comment with non exist commentID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{postId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{editBody}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{nonExistCommentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{nonExistCommentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete Comments Scenarios",
+			"item": [
+				{
+					"name": "Get All Posts- To get valid postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment for delete case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Store comment id in environment variable\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var commentId = responseJson.id;",
+									" // Set the commentId value to an environment variable named \"commentId\" to use it in further cases suc as edit and delete",
+									"    pm.environment.set(\"commentIdforDeletion\", commentId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment with Id Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIdforDeletion}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIdforDeletion}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get/Read  Deleted Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// We should be getting 404 as response status since comment has been deleted already",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIdforDeletion}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIdforDeletion}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments - To get non existing commentId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"const nonExistCommentId = lastId+1;",
+									"pm.environment.set('nonExistCommentId', nonExistCommentId);",
+									"//Last commentId+1 has been grabbed and set into an environment variable to use in nonexisting ID  case"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment with non exist commentId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{nonExistCommentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{nonExistCommentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get/Read Comment Scenarios",
+			"item": [
+				{
+					"name": "Get All Posts- To get valid postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment for get/read case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Store comment id in environment variable\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var commentId = responseJson.id;",
+									" // Set the commentId value to an environment variable named \"commentId\" to use it in further cases such as edit and delete",
+									"    pm.environment.set(\"commentForGetId\", commentId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Verify name when id is known\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var name;",
+									"    for (var i = 0; i < responseJson.length; i++) {",
+									"        if (responseJson[i].id === pm.environment.get(\"commentForGetId\")) {",
+									"            name = responseJson[i].name;",
+									"            break;",
+									"        }",
+									"    }",
+									"    pm.expect(name).to.eql(pm.environment.get(\"name\"));",
+									"});",
+									"//This test verifies that known commentID has the correct details"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments  - tests for body structure",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJson = pm.response.json();",
+									"// Assert that the response is an array",
+									"pm.test('Response should be an array', () => {",
+									"     ",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"});",
+									"responseJson.forEach((comment) => {",
+									"    // Assert the presence of key fields",
+									"    pm.test('comment should have id field ->id:'+comment.id, () => {",
+									"        pm.expect(comment).to.have.property('id');",
+									"    });",
+									"",
+									"    pm.test('comment should have postId field ->id:'+comment.id, () => {",
+									"        pm.expect(comment).to.have.property('postId');",
+									"    });",
+									"",
+									"    pm.test('comment should have name field ->id:'+comment.id, () => {",
+									"        pm.expect(comment).to.have.property('name');",
+									"    });",
+									"",
+									"    pm.test('comment should have email field ->id:'+comment.id, () => {",
+									"        pm.expect(comment).to.have.property('email');",
+									"    });",
+									"",
+									"    pm.test('comment should have body field ->id:'+comment.id, () => {",
+									"        pm.expect(comment).to.have.property('body');",
+									"    });",
+									"",
+									"    // Validate the data types of key fields",
+									"    pm.test('comment id should be a number ->id:'+comment.id, () => {",
+									"        pm.expect(comment.id).to.be.a('number');",
+									"    });",
+									"",
+									"    pm.test('comment postId should be a number ->id:'+comment.id, () => {",
+									"        pm.expect(comment.postId).to.be.a('number');",
+									"    });",
+									"",
+									"",
+									"    pm.test('comment body should be a string ->id:'+comment.id, () => {",
+									"        pm.expect(comment.body).to.be.a('string');",
+									"    });",
+									"     pm.test('comment name should be a string ->id:'+comment.id, () => {",
+									"        pm.expect(comment.name).to.be.a('string');",
+									"    });",
+									"     pm.test('comment email should be a string ->id:'+comment.id, () => {",
+									"        pm.expect(comment.email).to.be.a('string');",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comment with Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details\", () => {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson).to.deep.include({",
+									"        postId: Number(pm.environment.get(\"lastPostId\")),",
+									"        name: pm.environment.get(\"name\"),",
+									"        email: pm.environment.get(\"email\"),",
+									"        body: pm.environment.get(\"body\"),",
+									"        id: pm.environment.get(\"commentForGetId\"),",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Charset",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentForGetId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentForGetId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Posts- To get valid postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comments with postId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify every comment has the respective postId value\", function () {",
+									"var responseBody = pm.response.json();",
+									"for (var i = 0; i < responseBody.length; i++) {",
+									"    // Assert that the \"postId\" property is equal to lastPostId value",
+									"    pm.expect(responseBody[i].postId).to.equal(pm.environment.get(\"lastPostId\"));",
+									"}})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Charset",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments?postId={{lastPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "postId",
+									"value": "{{lastPostId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pagination Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify response has 10 items\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"    pm.expect(responseJson).to.have.lengthOf(10); // Assert that the response has a length of 10",
+									"    // value is set to 10 because the default value is set to 10 in project",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments?_page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "_page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Comment notEqual id case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify no id with value 6 in the response\", () => {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    const ids = responseJson.map(item => item.id);",
+									"    pm.expect(ids).to.not.include(6);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments?id_ne=6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "id_ne",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CRUD Tests",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									"//Last post Id has been grabbed and set into an environment variable to use in remaining cases"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Verify comment creation has the correct details\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(requestBody.body);",
+									"});",
+									"pm.test(\"Verify response body has id information\" , function (){",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"})",
+									"",
+									"pm.test(\"Store comment id in environment variable\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var commentId = responseJson.id;",
+									" // Set the commentId value to an environment variable named \"commentIDForCrudCase\" to use it in further cases such as edit and delete",
+									"    pm.environment.set(\"commentIDForCrudCase\", commentId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comment to verify Created comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details\", () => {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson).to.deep.include({",
+									"       postId:Number(pm.environment.get(\"lastPostId\")),",
+									"        name: pm.environment.get(\"name\"),",
+									"        email: pm.environment.get(\"email\"),",
+									"        body: pm.environment.get(\"body\"),",
+									"        id: pm.environment.get(\"commentIDForCrudCase\"),",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Charset",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIDForCrudCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIDForCrudCase}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details\", function () {",
+									"    var requestBody = JSON.parse(pm.request.body.raw);",
+									"    var responseJson = pm.response.json();",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson.postId).to.eql(requestBody.postId);",
+									"    pm.expect(responseJson.name).to.eql(requestBody.name);",
+									"    pm.expect(responseJson.email).to.eql(requestBody.email);",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"editBody\"));",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"commentIDForCrudCase\"));",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{editBody}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIDForCrudCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIDForCrudCase}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comment to verify Edited comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"pm.test(\"Verify comment edit has the correct details\", () => {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    // Assert that the response body matches the request body",
+									"    pm.expect(responseJson).to.deep.include({",
+									"       postId:Number(pm.environment.get(\"lastPostId\")),",
+									"        name: pm.environment.get(\"name\"),",
+									"        email: pm.environment.get(\"email\"),",
+									"        body: pm.environment.get(\"editBody\"), //to assert that comment is edited",
+									"        id: pm.environment.get(\"commentIDForCrudCase\"),",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Charset",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIDForCrudCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIDForCrudCase}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment with Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIDForCrudCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIDForCrudCase}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comment to verify Deleted Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// We should be getting 404 as response status since comment has been deleted already",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentIDForCrudCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentIDForCrudCase}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verify Comment comment can not be created for non Existing Post",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									"",
+									"//Last post Id has been grabbed and set into an environment variable to use in remaining cases"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Last Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Last post has been deleted",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 1,\n    \"id\": 102,\n    \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n    \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/posts/{{lastPostId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"posts",
+								"{{lastPostId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Last Post Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Assert that Last post has been deleted",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/posts/{{lastPostId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"posts",
+								"{{lastPostId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment for non-existing Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//A comment with deleted postId can be created currently. But let's suppose this is a bug and we want to observe this.",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})",
+									"    ",
+									"pm.test(\"Verify response body contains 'invalid postId'\", function () {",
+									"    var responseBody = pm.response.json();",
+									"    var responseBodyString = JSON.stringify(responseBody);",
+									"    pm.expect(responseBodyString).to.include(\"invalid postId\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verify Comment can not be created for Deleted Post",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const lastObject = responseJson[responseJson.length - 1];",
+									"const lastId = lastObject.id;",
+									"pm.environment.set('lastPostId', lastId);",
+									"//Last post Id has been grabbed and set into an environment variable to use in remaining cases"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment for Last Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);})",
+									"",
+									"pm.test(\"Store comment id in environment variable\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    var commentId = responseJson.id;",
+									" // Set the commentId value to an environment variable named \"commentId\" to use it in further cases such as edit and delete",
+									"    pm.environment.set(\"commentForPostCase\", commentId);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n      \"postId\": {{lastPostId}},\n      \"name\": \"{{name}}\",\n      \"email\": \"{{email}}\",\n      \"body\": \"{{body}}\"\n    }\n    //A comment has been created with a postId which we grabbed in the  previous request",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post with Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);})",
+									"",
+									"    //The last post has been deleted to test if the comments are still existing for deleted post"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{lastPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{lastPostId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comment of Deleted Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);})",
+									"",
+									"//Comments also been deleted if the respective post is deleted , so we can expect 404 response from server",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Charset",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentForPostCase}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentForPostCase}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
