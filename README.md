@@ -88,10 +88,11 @@ Before running the tests, make sure to set up the necessary environment variable
 
 ### Run the tests
 
-Once the collection is imported and the environment variables are set, you can run the tests by selecting the collection folder in the left sidebar and clicking on the "Run" button. This will execute all the requests and tests within the collection.
+Once the collection is imported and the environment variables are set, you can run the tests by selecting the folder in the left sidebar and clicking on the "Run" button. This will execute all the requests and tests within the collection. I would advise to unselect the checkbox for 'Stop run if an error occurs' under Advanced settings since some of my cases failing on purpose. I've added my comments for those tests.
 </br>
-<img width="1106" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/4e640ecc-ef8e-454e-953a-b4ec6a1b280b">
 </br>
+</br>
+<img width="1459" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/b7463c4d-c943-4552-be87-38df4484da28"></br>
 </br>
 <img width="1319" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/5c1b4230-e5b6-4c18-a4f6-53c4563c17bb">
 </br>
@@ -116,12 +117,14 @@ After running the tests, you can review the test results in the Postman runner. 
    <img width="370" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/f847301e-4f15-4dd5-a469-7a3f354031f1">
   </br>
   </br>
+
  - Each folder has been created with tests containing its own dependency. In order to set the environmental variables, these requests must be run in the order they are in the folder.
  </br>
  </br>
  <img width="452" alt="image" src="https://github.com/OsmanEgretli/Postman-Comment-Collection/assets/99646672/4450563a-d521-4bb1-ac8e-254dd95490cd">
   </br>
   </br>
+
  - The name of each request is created with the name of the test it serves its purpose. In addition, the comments written in the body and test section also explain their purpose.
 </br>
 </br>
